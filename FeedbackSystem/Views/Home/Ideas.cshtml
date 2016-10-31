@@ -1,0 +1,41 @@
+﻿<script>
+    function VoteResult(data) {
+        if (data.success) {
+            $('#ideas').load('@Url.Action("Ideas", "Home")');
+        }
+        else {
+            alert(data.Message);
+        }
+    }
+
+    function Refresh() {
+        $('#ideas').load('@Url.Action("Ideas", "Home")');
+    }
+
+    setTimeout("Refresh();", 30000);
+</script>
+
+
+@model List<FeedbackSystem.Models.IdeaToView>
+@if (ViewBag.IsAuthenticated)
+{
+    <hr />
+    <p style="background:#a6ffa6; border-radius:4px;padding:5px;text-align:center;">У вас осталось <b>@ViewBag.CountVote</b> голосов!</p>
+}
+@if (Model != null)
+{
+    <hr />
+    foreach (FeedbackSystem.Models.IdeaToView idea in Model)
+    {
+        <p>Идея пользователя <b>@idea.Username</b>, добавлена @idea.Date</p>
+        <pre>@idea.DescriptionIdea</pre>
+        <p style="text-align:right">
+            <text style="color:Green; font-weight:bold;">@idea.PositiveVotes</text>
+            @Ajax.ImageActionLink("/Picture/positive.png", "Positive", "Vote", new { Id = idea.Id, vote = true }, new AjaxOptions { OnSuccess = "VoteResult" }, new { @class = "vote" })
+            <text>  </text>
+            <text style="color:Red; font-weight:bold;">@idea.NegativeVotes</text>
+            @Ajax.ImageActionLink("/Picture/negative.png", "Negative", "Vote", new { Id = idea.Id, vote = false }, new AjaxOptions { OnSuccess = "VoteResult" }, new { @class = "vote" })
+        </p>
+    }
+    <hr />
+}

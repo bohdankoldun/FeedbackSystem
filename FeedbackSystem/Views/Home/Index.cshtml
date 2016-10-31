@@ -1,0 +1,32 @@
+﻿<script>
+    function AddIdeaResult(data) {
+
+        if (data.success) {
+            $('#ideas').load('@Url.Action("Ideas", "Home")');
+            $("textarea[name='DescriptionIdea']").val("");
+        }
+        else {
+            alert(data.Message);
+        }
+    }
+</script>
+<h3 style="text-align:center;">Идеи об улучшении продукта <b>Someproduct</b></h3>
+<div id="ideas">
+    @Html.Partial("Ideas")
+</div>
+
+@if (ViewBag.IsAuthenticated)
+{
+    using (Ajax.BeginForm("AddNewIdea", new AjaxOptions { OnSuccess = "AddIdeaResult" }))
+    {
+        <textarea name="DescriptionIdea" style="width:100%;border-radius:5px;"></textarea>
+        <p style="text-align:right;margin-top:10px;">
+            <input type="submit" value="Add Idea" />
+        </p>
+    }
+}
+else
+{
+    <p style="text-align:center;">@Html.ActionLink("Авторизуйтесь", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })  для возможности голосовать и добавлять свои идеи!</p>
+}
+
